@@ -26,9 +26,6 @@ public class MainFlow {
         metod2(arr, h);
         System.out.println("time metod 2: " + (System.currentTimeMillis()-a1));
 
-
-        System.out.println("Выполнение программы закончилось: " + (System.currentTimeMillis()-a1));
-
     }
 
 
