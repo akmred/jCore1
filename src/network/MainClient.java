@@ -17,9 +17,7 @@ public class MainClient {
         DataInputStream in;
         DataOutputStream out = null;
         final String IP_ADRESS = "localhost";
-        final int PORT = 8189;
-        Scanner scanner = new Scanner(System.in);
-        String inputPhrases;
+        final int PORT = 8188;
 
             try {
 
@@ -29,12 +27,36 @@ public class MainClient {
             // отправляем в поток
             out = new DataOutputStream(socket.getOutputStream());
 
+                //Поток отправки данных
+            DataOutputStream finalOut = out;
+            new Thread(() -> {
+                while (true) {
+                    Scanner scanner = new Scanner(System.in);
+                    String inputPhrases;
+                    inputPhrases = scanner.nextLine();
+
+                    try {
+                        finalOut.writeUTF(inputPhrases);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
              new Thread(() -> {
 
                 try {
                     while (true){
                         String str = in.readUTF();
-                        System.out.printf(str + "\n");
+
+                        if (str.equals("/end")){
+                            System.out.printf("server disconnected");
+                            break;
+
+                        }else {
+                            System.out.printf("server: " + str + "\n");
+                        }
 
                     }
                 } catch (IOException e) {
@@ -47,10 +69,6 @@ public class MainClient {
                     }
                 }
              }).start();
-
-            System.out.printf("enter phrases: ");
-             inputPhrases = scanner.nextLine();
-             out.writeUTF(inputPhrases);
 
             } catch (IOException ex) {
             ex.printStackTrace();
